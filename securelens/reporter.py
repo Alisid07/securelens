@@ -76,8 +76,8 @@ def generate_markdown(results: list[ScanResult]) -> str:
         "",
         "## Summary",
         "",
-        f"| Metric | Value |",
-        f"|--------|-------|",
+        "| Metric | Value |",
+        "|----|---|",
         f"| Files Scanned | {len(results)} |",
         f"| Total Vulnerabilities | {total_vulns} |",
         f"| ✅ Passed | {passed} |",
@@ -88,7 +88,7 @@ def generate_markdown(results: list[ScanResult]) -> str:
     for result in results:
         status = "✅ PASSED" if result.passed else "❌ FAILED"
         lines += [
-            f"---",
+            "---",
             f"## `{result.file}`  {status}",
             f"- **Language**: {result.language}",
             f"- **Risk Score**: {result.risk_score}",
@@ -117,9 +117,9 @@ def generate_markdown(results: list[ScanResult]) -> str:
                 f"- **CWE**: {vuln.cwe or 'N/A'}",
                 f"- **Description**: {vuln.description}",
                 f"- **Suggestion**: {vuln.suggestion}",
-                f"```",
+                "```",
                 vuln.snippet,
-                f"```",
+                "```",
                 "",
             ]
 

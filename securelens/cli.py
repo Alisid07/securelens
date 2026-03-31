@@ -113,7 +113,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     # ── rules subcommand ─────────────────────────────────────
-    rules_cmd = sub.add_parser("rules", help="List all built-in rules")
+    sub.add_parser("rules", help="List all built-in rules")
 
     args = parser.parse_args(argv)
 

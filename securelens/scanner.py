@@ -133,7 +133,7 @@ class MockLLMClient:
     ]
 
     def review(self, code: str, static_findings: list[Vulnerability]) -> str:
-        import hashlib, random
+        import hashlib`n        import random
 
         seed = int(hashlib.md5(code[:64].encode()).hexdigest(), 16)
         rng = random.Random(seed)

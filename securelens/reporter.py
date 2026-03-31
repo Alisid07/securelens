@@ -77,7 +77,7 @@ def generate_markdown(results: list[ScanResult]) -> str:
         "## Summary",
         "",
         "| Metric | Value |",
-        "|----|---|",
+        "|--------|-------|",
         f"| Files Scanned | {len(results)} |",
         f"| Total Vulnerabilities | {total_vulns} |",
         f"| ✅ Passed | {passed} |",

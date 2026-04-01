@@ -228,22 +228,28 @@ Add to your GitHub Actions workflow:
 
 ```
 securelens/
-├── securelens/
-│   ├── __init__.py        # package metadata
-│   ├── scanner.py         # core engine: rules, Scanner, LLMClient protocol
-│   ├── reporter.py        # JSON / Markdown / SARIF output
-│   ├── cli.py             # command-line interface
-│   ├── api.py             # FastAPI web service
-│   └── __main__.py        # python -m securelens entrypoint
+├── securelens/                 # Core Python package
+│   ├── __init__.py             # Package metadata
+│   ├── scanner.py              # Static rules + Scanner engine + LLMClient protocol
+│   ├── reporter.py             # JSON / Markdown / SARIF report generation
+│   ├── cli.py                  # Command-line interface (python -m securelens)
+│   ├── api.py                  # FastAPI REST API service
+│   └── __main__.py             # Entrypoint for module execution
+│
 ├── tests/
-│   └── test_scanner.py    # pytest test suite (25 tests)
+│   └── test_scanner.py         # Pytest suite (25 tests)
+│
 ├── examples/
-│   ├── example_vulnerable.py   # intentionally insecure demo file
-│   └── example_safe.py         # secure refactored counterpart
-├── .github/workflows/
-│   └── ci.yml             # GitHub Actions: test + self-scan + SARIF upload
-├── pyproject.toml
-└── README.md
+│   ├── example_vulnerable.py   # Insecure demo file for scanning
+│   └── example_safe.py         # Secure refactored version
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml              # CI pipeline: lint, tests, self-scan, SARIF upload
+│
+├── pyproject.toml              # Build system, dependencies, metadata
+└── README.md                   # Documentation + usage + architecture diagrams
+
 ```
 
 ---

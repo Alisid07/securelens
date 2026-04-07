@@ -273,7 +273,6 @@ http://127.0.0.1:8000/docs
 
 ## 📸 UI Preview
 
-![SecureLens UI](frontend/screenshot.png)
 <img width="1137" height="972" alt="image" src="https://github.com/user-attachments/assets/e428b12f-9dac-4244-8fcf-153b19b3a314" />
 
 ## Roadmap

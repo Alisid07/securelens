@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>SecureLens Scanner</h2>
+
+<textarea id="code" rows="10" cols="80"></textarea><br><br>
+
+<button onclick="scan()">Scan Code</button>
+
+<pre id="output"></pre>
+
+<script>
+async function scan() {
+  const code = document.getElementById("code").value;
+
+  const res = await fetch("http://127.0.0.1:8000/scan", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      code: code,
+      filename: "snippet.py",
+      language: "python",
+      use_llm: true
+    })
+  });
+
+  const data = await res.json();
+  document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+}
+</script>
+
+</body>
+</html>

@@ -101,3 +101,11 @@ def list_rules():
         }
         for r in PYTHON_RULES
     ]
+@app.get("/")
+def root():
+    return {
+        "app": "SecureLens API",
+        "status": "running",
+        "docs": "/docs",
+        "health": "/health"
+    }

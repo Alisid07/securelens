@@ -1,0 +1,147 @@
+# SecureLens — Python security rule definitions
+#
+# Each rule is applied per-line via regex against Python source files.
+#
+# Fields:
+#   id               Unique rule identifier (e.g. PY001)
+#   title            Short human-readable name
+#   severity         CRITICAL | HIGH | MEDIUM | LOW | INFO
+#   cwe              CWE identifier (e.g. CWE-89)
+#   pattern          Python regex; applied to each source line
+#   case_insensitive (optional) true → apply re.IGNORECASE
+#   description      Explanation of the security risk
+#   suggestion       Remediation advice shown to the developer
+
+rules:
+
+  - id: PY001
+    title: Hardcoded Secret
+    severity: CRITICAL
+    cwe: CWE-798
+    case_insensitive: true
+    pattern: |-
+      (password|secret|api_key|token|passwd)\s*=\s*["'][^"']{4,}["']
+    description: A credential or secret appears to be hardcoded in source code.
+    suggestion: >-
+      Use environment variables or a secrets manager
+      (e.g. AWS Secrets Manager, HashiCorp Vault).
+
+  - id: PY002
+    title: SQL Injection Risk
+    severity: HIGH
+    cwe: CWE-89
+    pattern: |-
+      execute\s*\(\s*["'].*%[s\d]|execute\s*\(\s*f["']|execute\s*\(\s*.*\.format\(
+    description: String interpolation detected inside a SQL execute() call.
+    suggestion: >-
+      Use parameterised queries:
+      cursor.execute('SELECT * FROM t WHERE id = %s', (user_id,))
+
+  - id: PY003
+    title: Shell Injection via os.system
+    severity: HIGH
+    cwe: CWE-78
+    pattern: |-
+      os\.system\s*\(
+    description: >-
+      os.system() passes commands directly to the shell;
+      user input can trigger command injection.
+    suggestion: Use subprocess.run() with a list of arguments and shell=False.
+
+  - id: PY004
+    title: Unsafe Deserialization (pickle)
+    severity: HIGH
+    cwe: CWE-502
+    pattern: |-
+      \bpickle\.loads?\s*\(
+    description: pickle.load/loads can execute arbitrary code when loading untrusted data.
+    suggestion: >-
+      Use JSON or a schema-validated format.
+      If pickle is required, verify HMAC signatures before deserialising.
+
+  - id: PY005
+    title: eval() Usage
+    severity: HIGH
+    cwe: CWE-95
+    pattern: |-
+      \beval\s*\(
+    description: eval() executes arbitrary Python code; dangerous with user-controlled input.
+    suggestion: Replace eval() with ast.literal_eval() for safe expression parsing.
+
+  - id: PY006
+    title: Insecure Hash (MD5/SHA1)
+    severity: MEDIUM
+    cwe: CWE-327
+    pattern: |-
+      hashlib\.(md5|sha1)\s*\(
+    description: MD5 and SHA-1 are cryptographically broken for security-sensitive contexts.
+    suggestion: Use hashlib.sha256() or hashlib.sha3_256() for security-relevant hashing.
+
+  - id: PY007
+    title: Debug Mode Enabled
+    severity: MEDIUM
+    cwe: CWE-215
+    case_insensitive: true
+    pattern: |-
+      debug\s*=\s*True
+    description: Debug mode may expose stack traces and internal state to end users.
+    suggestion: Ensure debug=False in production; control via an environment variable.
+
+  - id: PY008
+    title: Broad Exception Suppression
+    severity: LOW
+    cwe: CWE-390
+    pattern: |-
+      except\s*:\s*pass|except\s+Exception\s*:\s*pass
+    description: Silently swallowing all exceptions hides bugs and security errors.
+    suggestion: Catch specific exception types and log them appropriately.
+
+  - id: PY009
+    title: Random Used for Security
+    severity: MEDIUM
+    cwe: CWE-338
+    pattern: |-
+      \brandom\.(random|randint|choice|shuffle)\s*\(
+    description: The random module is not cryptographically secure.
+    suggestion: >-
+      Use secrets.token_hex() or secrets.choice()
+      for security-sensitive randomness.
+
+  - id: PY010
+    title: SSL Verification Disabled
+    severity: HIGH
+    cwe: CWE-295
+    pattern: |-
+      verify\s*=\s*False
+    description: >-
+      Disabling SSL certificate verification exposes
+      connections to man-in-the-middle attacks.
+    suggestion: >-
+      Remove verify=False.
+      If using a custom CA, pass verify='/path/to/ca-bundle.crt'.
+
+  - id: PY011
+    title: Path Traversal
+    severity: HIGH
+    cwe: CWE-22
+    pattern: |-
+      open\s*\(.*\+\s*(request\.|input\()|os\.path\.join\s*\(.*request\.|pathlib\.Path\s*\(.*request\.
+    description: >-
+      A file path constructed from user-controlled input may allow an attacker
+      to traverse outside the intended directory.
+    suggestion: >-
+      Resolve paths with pathlib.Path.resolve() and verify the result is inside
+      an allowed base directory before opening the file.
+
+  - id: PY012
+    title: Server-Side Request Forgery (SSRF)
+    severity: HIGH
+    cwe: CWE-918
+    pattern: |-
+      (requests\.(get|post|put|delete|head|patch)|urllib\.request\.urlopen)\s*\(\s*(request\.|f["'].*\{|.*\+\s*request)
+    description: >-
+      An HTTP request URL constructed from user-controlled input may allow an
+      attacker to reach internal services or cloud metadata endpoints.
+    suggestion: >-
+      Validate and allowlist URLs before making outbound requests.
+      Use a URL parser to enforce scheme and host restrictions.

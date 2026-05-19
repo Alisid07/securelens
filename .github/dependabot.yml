@@ -1,0 +1,53 @@
+version: 2
+
+updates:
+  # Python dependencies (pip / pyproject.toml)
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: UTC
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+      - python
+    groups:
+      # Group all dev/test tooling into a single PR to reduce noise
+      dev-dependencies:
+        patterns:
+          - pytest*
+          - ruff
+          - mypy
+          - httpx
+      # Group LLM provider SDKs together
+      llm-sdks:
+        patterns:
+          - anthropic
+          - openai
+    ignore:
+      # Only take patch updates for major frameworks until we explicitly upgrade
+      - dependency-name: fastapi
+        update-types: ["version-update:semver-major"]
+      - dependency-name: pydantic
+        update-types: ["version-update:semver-major"]
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+
+  # GitHub Actions
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: UTC
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope

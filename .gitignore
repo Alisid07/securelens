@@ -1,4 +1,9 @@
 .venv/
 __pycache__/
+feature/free-productize-securelens
 *.pyc
 .env
+
+.env
+*.pyc
+main
